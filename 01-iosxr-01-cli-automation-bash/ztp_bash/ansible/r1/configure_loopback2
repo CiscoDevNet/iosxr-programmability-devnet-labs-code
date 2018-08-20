@@ -1,0 +1,5 @@
+!
+interface loopback2
+  ipv4 address 100.100.100.100/24
+!
+end

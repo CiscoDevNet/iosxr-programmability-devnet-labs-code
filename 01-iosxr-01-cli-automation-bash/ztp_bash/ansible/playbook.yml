@@ -1,0 +1,19 @@
+---
+- hosts:  routers
+  strategy: debug
+  become: yes
+  gather_facts: no
+
+  tasks:
+  - debug: msg="hostname={{hostname}}"
+  - name: Copy Config file to router
+    copy: src=./{{ hostname }}/configure_loopback2 dest=/home/admin/configure_loopback2  owner=admin force=yes
+
+  - name: Configure loopback2 using config merge
+    shell: source /pkg/bin/ztp_helper.sh && xrapply /home/admin/configure_loopback2
+  
+  - name: Verify configuration
+    shell: source /pkg/bin/ztp_helper.sh && xrcmd "show configuration running-config interface loopback2"
+    register: output 
+
+  - debug: msg=output.stdout_lines
