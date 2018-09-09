@@ -44,7 +44,7 @@ class ZtpChildClass(ZtpHelpers):
             return ""
 
 
-    def configure_ospf(self) {
+    def configure_ospf(self):
 
         ospf_config = """!
                          router ospf ztp-python
@@ -75,10 +75,9 @@ class ZtpChildClass(ZtpHelpers):
             print("Failed to apply OSPF configuration")
             print("Error : "+str(e))
             return False
-    }
 
 
-    def configure_bgp(asn=None, hostname=None) {
+    def configure_bgp(asn=None, hostname=None):
 
         hostname = self.get_hostname() 
  
@@ -121,10 +120,9 @@ class ZtpChildClass(ZtpHelpers):
             print("Error : "+str(e))
             os.remove("/tmp/bgp_config")
             return False
-    }
 
 
-    def configure_loopback(self) {
+    def configure_loopback(self):
 
         hostname = self.get_hostname()
 
@@ -155,8 +153,6 @@ class ZtpChildClass(ZtpHelpers):
             print("Error : "+str(e))
             return False
     
-    }
-
 
 if __name__ == "__main__":
 
