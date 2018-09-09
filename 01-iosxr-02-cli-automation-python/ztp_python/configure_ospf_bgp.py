@@ -5,14 +5,14 @@ sys.path.append("/pkg/bin/")
 from ztp_helper import ZtpHelpers
 
 ParameterMap = { 
-                  "rtr1" : {
+                  "r1" : {
                              "local_asn" : 65000,
                              "remote_asn" : 65000,
                              "loopback0_ip" : "1.1.1.1/32",
                              "bgp_neighbor_ip" : "2.2.2.2"
                            },
 
-                  "rtr2" : {
+                  "r2" : {
                              "local_asn" : 65000,
                              "remote_asn" : 65000,
                              "loopback0_ip" : "2.2.2.2/32",
