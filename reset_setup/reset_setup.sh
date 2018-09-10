@@ -1,5 +1,8 @@
 #!/bin/bash
-source ./connection_details.sh
+
+SCRIPT_DIR="$(cd "$(dirname "${0}")"; echo "$(pwd)")"
+
+source ${SCRIPT_DIR}/connection_details.sh
 
 function reset_config() {
 
@@ -11,7 +14,7 @@ function reset_config() {
 
   echo -ne "\nStarting Reset process for Router $router....\n"
   # Transfer file to the router
-  sshpass -p $r_password scp -P $r_port -o StrictHostKeyChecking=no ./configs/router_reset_$router.conf ${r_user}@$r_ip:/home/admin/router_reset.conf 2>&1 >/dev/null
+  sshpass -p $r_password scp -P $r_port -o StrictHostKeyChecking=no ${SCRIPT_DIR}/configs/router_reset_$router.conf ${r_user}@$r_ip:/home/admin/router_reset.conf 2>&1 >/dev/null
   sleep 2
   source_library="source /pkg/bin/ztp_helper.sh"
   bash_cmd="$source_library && xrreplace /home/admin/router_reset.conf"

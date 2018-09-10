@@ -1,5 +1,5 @@
 !
 interface loopback2
-  ipv4 address 200.200.200.200/24
+  ipv4 address 200.200.200.200/32
 !
 end

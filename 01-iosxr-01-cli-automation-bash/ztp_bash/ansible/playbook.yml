@@ -16,4 +16,5 @@
     shell: source /pkg/bin/ztp_helper.sh && xrcmd "show configuration running-config interface loopback2"
     register: output 
 
-  - debug: msg=output.stdout_lines
+  - debug: 
+        var: output.stdout_lines

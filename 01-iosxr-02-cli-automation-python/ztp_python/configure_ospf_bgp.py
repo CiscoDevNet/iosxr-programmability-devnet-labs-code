@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import sys
+import sys,os
 sys.path.append("/pkg/bin/")
 from ztp_helper import ZtpHelpers
+from pprint import pprint
 
-ParameterMap = { 
+ParameterMap = {
                   "r1" : {
                              "local_asn" : 65000,
                              "remote_asn" : 65000,
@@ -26,19 +27,19 @@ class ZtpChildClass(ZtpHelpers):
     def get_hostname(self):
 
         show_command= "show running-config hostname"
-      
+
         response = self.xrcmd({"exec_cmd" : show_command})
 
         if response["status"] == "success":
             try:
                 output = response["output"]
                 hostname_config = output[0]
-                hostname = hostname_config.split()[1] 
+                hostname = hostname_config.split()[1]
                 return hostname
             except Exception as e:
                 print("Failed to extract hostname")
                 print("Error: " + str(e))
-                return "" 
+                return ""
         else:
             print("Failed to fetch hostname configuration")
             return ""
@@ -59,28 +60,28 @@ class ZtpChildClass(ZtpHelpers):
                          !
                          end
                       """
-    
+
         try:
             response = self.xrapply_string(cmd=ospf_config)
 
             if response["status"] == "success":
-                print("OSPF configuration successfully applied")
-                print(response["output"])
+                print("\nOSPF configuration successfully applied\n")
+                pprint(response["output"])
                 return True
             else:
-                print("Failed to apply OSPF configuration")
-                print(response["output"])
+                print("\nFailed to apply OSPF configuration\n")
+                pprint(response["output"])
                 return False
         except Exception as e:
-            print("Failed to apply OSPF configuration")
+            print("\nFailed to apply OSPF configuration\n")
             print("Error : "+str(e))
             return False
 
 
-    def configure_bgp(asn=None, hostname=None):
+    def configure_bgp(self):
 
-        hostname = self.get_hostname() 
- 
+        hostname = self.get_hostname()
+
         if hostname == "":
             print("Require hostname to determine bgp config, aborting")
             return False
@@ -96,27 +97,28 @@ class ZtpChildClass(ZtpHelpers):
                            !
                          !
                          end
-                      """.format(local_asn = ParameterMap[hostname][local_asn],
-                                 neighbor_ip = ParameterMap[hostname][bgp_neighbor_ip],
-                                 remote_asn = ParameterMap[hostname][remote_asn])
+                      """.format(local_asn = ParameterMap[hostname]["local_asn"],
+                                 neighbor_ip = ParameterMap[hostname]["bgp_neighbor_ip"],
+                                 remote_asn = ParameterMap[hostname]["remote_asn"])
 
         with open("/tmp/bgp_config", 'w') as fd:
             fd.write(bgp_config)
 
         try:
-            response = self.xrapply(filename="/tmp/bgp_config")
+            response = self.xrapply(filename="/tmp/bgp_config",
+                                    reason="iBGP config using xrapply_with_reason")
             os.remove("/tmp/bgp_config")
 
             if response["status"] == "success":
-                print("BGP configuration successfully applied")  
-                print(response["output"])
+                print("\nBGP configuration successfully applied\n")  
+                pprint(response["output"])
                 return True
             else:
-                print("Failed to apply BGP configuration")  
-                print(response["output"])
+                print("\nFailed to apply BGP configuration\n")  
+                pprint(response["output"])
                 return False         
         except Exception as e:
-            print("Failed to apply BGP configuration")
+            print("\nFailed to apply BGP configuration\n")
             print("Error : "+str(e))
             os.remove("/tmp/bgp_config")
             return False
@@ -135,24 +137,24 @@ class ZtpChildClass(ZtpHelpers):
                                 ipv4 address {loopback0_ip}
                               !
                               end
-                           """.format(loopback0_ip = ParameterMap[hostname][loopback0_ip])
+                           """.format(loopback0_ip = ParameterMap[hostname]["loopback0_ip"])
 
         try:
             response = self.xrapply_string(cmd=loopback0_config)
 
             if response["status"] == "success":
-                print("Loopback0 configuration successfully applied")
-                print(response["output"])
+                print("\nLoopback0 configuration successfully applied\n")
+                pprint(response["output"])
                 return True
             else:
-                print("Failed to apply Loopback0 configuration")  
-                print(response["output"]) 
+                print("\nFailed to apply Loopback0 configuration\n")  
+                pprint(response["output"])
                 return False
         except Exception as e:
-            print("Failed to apply Loopback0 configuration")
+            print("\nFailed to apply Loopback0 configuration\n")
             print("Error : "+str(e))
             return False
-    
+
 
 if __name__ == "__main__":
 
@@ -161,7 +163,7 @@ if __name__ == "__main__":
     if not config_obj.configure_loopback():
         print("Couldn't apply loopback0 configuration, aborting")
         sys.exit(1)
- 
+
     if not config_obj.configure_ospf():
         print("Couldn't apply ospf configuration, aborting")
         sys.exit(1)

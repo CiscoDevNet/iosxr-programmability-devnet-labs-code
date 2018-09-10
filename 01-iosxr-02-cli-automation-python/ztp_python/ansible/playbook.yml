@@ -1,0 +1,24 @@
+---
+- hosts:  routers
+  strategy: debug
+  become: yes
+  gather_facts: no
+
+  tasks:
+  - debug: msg="hostname={{hostname}}"
+  - name: Copy and Execute the Python Configuration script on the router
+    script: /root/{{ hostname }}/configure_loopback2.py
+    register: output
+
+  - debug:
+        var: output.stdout_lines
+
+  - name: Copy the show command script to the router
+    copy: src=/root/{{ hostname }}/show_loopback_config.py dest=/home/admin/show_loopback_config.py owner=admin force=yes mode=u+x
+
+  - name: Execute the show command script
+    shell: /home/admin/show_loopback_config.py
+    register: output
+
+  - debug:
+        var: output.stdout_lines
