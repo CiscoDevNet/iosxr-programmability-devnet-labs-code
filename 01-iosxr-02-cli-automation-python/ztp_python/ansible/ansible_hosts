@@ -1,3 +1,4 @@
 [routers]
 r1 ansible_user="admin" ansible_password="admin" ansible_host=10.10.20.70 ansible_port=2222 hostname=r1
 r2 ansible_user="admin" ansible_password="admin" ansible_host=10.10.20.70 ansible_port=2232 hostname=r2
+
